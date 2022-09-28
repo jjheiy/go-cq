@@ -11,7 +11,7 @@ go-cq是一个基于cq-http的快速开发框架,它不需要开发人员与各�
 cq-http下载位置 https://github.com/Mrs4s/go-cqhttp
 
 ## 快速上手
-`go get -u https://github.com/qHeiy/go-cq`
+`go get -u github.com/qHeiy/go-cq`
 
 ``` golang
 app := cq.New()
