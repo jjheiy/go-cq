@@ -13,7 +13,7 @@ cq-http下载位置 https://github.com/Mrs4s/go-cqhttp
 ## 快速上手
 `go get -u github.com/qHeiy/go-cq`
 
-``` golang
+```golang
 app := cq.New()
 //监听群聊消息
 app.HandleMsgGroupFunc("你好", func(ai *cq.Ai) {
@@ -25,14 +25,14 @@ app.Run(":5701")    //监听cq-http端口
 ```
 ## 获取参数
 参数以{n:参数名,t:参数类型,c:cqcode类型,r:正则表达式}的形式,除了参数名,其他都可以省略,当参数名为第一个参数时,n可以省略
-``` golang
+```golang
 app.HandleMsgGroupFunc("你好啊,{name}", func(ai *cq.Ai) {
     name := ai.Msg.GetParameter("name")
     ai.Group.SendMsg("我不是" + name + "啊,你认错人了吧!")
 })
 ```
 ## 参数限制
-``` golang
+```golang
 app.HandleMsgGroupFunc("我电话{phone,r:\\d{11}}", func(ai *cq.Ai) {
     phone := ai.Msg.GetParameter("phone")
     ai.Group.SendMsg("你的电话是" + phone)
@@ -46,7 +46,7 @@ app.HandleMsgGroupFunc("我今年{age,t:uint8}岁了", func(ai *cq.Ai) {
 
 ## 管理员系统
 go-cq内置了管理员系统,包含超级管理员,不同权限的管理员,白名单,黑名单系统
-``` golang
+```golang
 app.HandleMsgAdmin("禁言{qq,c:id} {time,t:int}小时", func(ai *cq.Ai) {
     qq := ai.Msg.GetParameter("qq")
     id := ai.Code.GetAtQQ(qq)   //获取真实qq号
@@ -76,12 +76,12 @@ app.AddAdmins(2357054981, 9)
 ## 实现一个简单的学习功能
 ```golang
 app.HandleMsgAdmin("学习 {key},{value}", func(ai *cq.Ai) {
-key := ai.Msg.GetParameter("key")
-value := ai.Msg.GetParameter("value")
-ai.HandleMsgGroupFunc(key, func(ai *cq.Ai) {
-ai.Group.SendMsg(value)
-})
-ai.Group.SendMsg("学习成功\r\n问:" + key + "\r\n答:" + value)
+    key := ai.Msg.GetParameter("key")
+    value := ai.Msg.GetParameter("value")
+    ai.HandleMsgGroupFunc(key, func(ai *cq.Ai) {
+        ai.Group.SendMsg(value)
+    })
+    ai.Group.SendMsg("学习成功\r\n问:" + key + "\r\n答:" + value)
 }, 5)
 ```
 由于参数解析是存放在内存中,我们不建议动态去创建解析事件
@@ -90,17 +90,17 @@ go-cq中内置了一个shit组件,我们可以使用它实现学习功能
 shit组件只会在消息没有进行任何处理时才会执行
 ```golang
 mp := map[string]string{ //模拟静态数据 
-"你好":      "我不好",
-"为什么不好":   "就是不好",
-"为什么就是不好": "gun",
+    "你好":      "我不好",
+    "为什么不好":   "就是不好",
+    "为什么就是不好": "gun",
 }
 app.Shits(func(ai *cq.Ai) {
-value := ai.Msg.GetValue(mp)    //从数据源里匹配
-if len(value) == 0 {
-return
-}
-ai.Group.SendMsg(value)
-ai.Stop()
+    value := ai.Msg.GetValue(mp)    //从数据源里匹配
+    if len(value) == 0 {
+        return
+    }
+    ai.Group.SendMsg(value)
+    ai.Stop()
 })
 ```
 **注意** `ai.stop()`会直接跳出当前会话
@@ -108,25 +108,25 @@ ai.Stop()
 前置器是在参数解析之前执行的函数,常用做参数效验,快速操作,中间件
 ```golang
 app.Uses(func(ai *cq.Ai) {
-if strings.Contains(ai.Msg.GetRawMessage(), "sb") {
-err := ai.Msg.DelMsg()//测回消息
-if err != nil {
-panic(err)
-}
-ai.Group.SendMsg("检测到不好的词汇,已撤回")
-ai.Stop() //结束当前会话
-}
+    if strings.Contains(ai.Msg.GetRawMessage(), "sb") {
+        err := ai.Msg.DelMsg()//测回消息
+        if err != nil {
+            panic(err)
+        }
+        ai.Group.SendMsg("检测到不好的词汇,已撤回")
+        ai.Stop() //结束当前会话
+    }
 })
 ```
 ## 后置器
 后置器是在参数解析之后执行的函数,常用做数据统计,信息收集,日志处理
 ```golang
 app.Afters(func(ai *cq.Ai) {
-mp := map[string]any{
-"id":  ai.User.GetId(),
-"age": ai.User.GetAge(),
-}
-fmt.Println(mp)
+    mp := map[string]any{
+        "id":  ai.User.GetId(),
+        "age": ai.User.GetAge(),
+    }
+    fmt.Println(mp)
 })
 ```
 ## 定时器
