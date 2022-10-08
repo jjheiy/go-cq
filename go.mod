@@ -1,3 +1,3 @@
-module github.com/qHeiy/go-cq
+module github.com/jjheiy/go-cq
 
 go 1.18

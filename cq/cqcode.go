@@ -2,7 +2,7 @@ package cq
 
 import (
 	"fmt"
-	"hyai/cq/request"
+	request "github.com/jjheiy/go-cq/cq/request"
 	"regexp"
 	"strconv"
 	"strings"

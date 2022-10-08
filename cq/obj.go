@@ -2,7 +2,7 @@ package cq
 
 import (
 	"fmt"
-	"hyai/cq/request"
+	"github.com/jjheiy/go-cq/cq/request"
 	"regexp"
 	"strings"
 )
@@ -24,6 +24,10 @@ func newAi(u *User, g *Group, m *Msg) *Ai {
 		Msg:   m,
 		state: 0,
 	}
+}
+
+func (ai *Ai) IsGroup() bool {
+	return ai.Group != nil
 }
 
 func (ai *Ai) Stop() {

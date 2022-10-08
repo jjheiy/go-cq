@@ -129,3 +129,38 @@ app.Afters(func(ai *cq.Ai) {
     fmt.Println(mp)
 })
 ```
+## 定时器
+1. 延时执行
+
+在一段时间后执行
+```golang
+app.HandleMsgGroupFunc("{num}分钟后提醒我喝水", func(ai *cq.Ai) {
+    num, err := strconv.Atoi(ai.Msg.GetParameter("num"))
+    if err != nil {
+        ai.Group.SendMsg("输入格式有误")
+        return
+    }
+    ai.DelayEvent(num*60, func() {
+        at := ai.Code.At(strconv.FormatInt(ai.User.GetId(), 10))
+        ai.Group.SendMsg(at + " 多喝热水")
+    })
+})
+```
+
+2. 定时执行
+
+指定某个时间执行,可设置执行间隔时间,为0表示只执行一次
+```golang
+app.HandleMsgGroupFunc("开启宵禁{time1},{time2}", func(ai *cq.Ai) {
+    time1 := ai.Msg.GetParameter("time1") //"2022-10-08 23:00:00"
+    time2 := ai.Msg.GetParameter("time2") //"2022-10-09 7:00:00"
+    ai.AddTimedEvent("curfew", time1, func() {
+        ai.Group.SendMsg("宵禁时间到了,大家晚安!!!")
+        ai.Group.TabooGroup(true)
+    }, 24*60*60)
+    ai.AddTimedEvent("liftABan", time2, func() {
+        ai.Group.TabooGroup(false)
+        ai.Group.SendMsg("新的一天开始了,大家早上好!!!")
+    }, 24*60*60)
+})
+```
