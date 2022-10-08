@@ -76,12 +76,12 @@ app.AddAdmins(2357054981, 9)
 ## 实现一个简单的学习功能
 ```golang
 app.HandleMsgAdmin("学习 {key},{value}", func(ai *cq.Ai) {
-    key := ai.Msg.GetParameter("key")
-    value := ai.Msg.GetParameter("value")
-    ai.HandleMsgGroupFunc(key, func(ai *cq.Ai) {
-        ai.Group.SendMsg(value)
-    })
-    ai.Group.SendMsg("学习成功\r\n问:" + key + "\r\n答:" + value)
+key := ai.Msg.GetParameter("key")
+value := ai.Msg.GetParameter("value")
+ai.HandleMsgGroupFunc(key, func(ai *cq.Ai) {
+ai.Group.SendMsg(value)
+})
+ai.Group.SendMsg("学习成功\r\n问:" + key + "\r\n答:" + value)
 }, 5)
 ```
 由于参数解析是存放在内存中,我们不建议动态去创建解析事件
@@ -90,17 +90,17 @@ go-cq中内置了一个shit组件,我们可以使用它实现学习功能
 shit组件只会在消息没有进行任何处理时才会执行
 ```golang
 mp := map[string]string{ //模拟静态数据 
-    "你好":      "我不好",
-    "为什么不好":   "就是不好",
-    "为什么就是不好": "gun",
+"你好":      "我不好",
+"为什么不好":   "就是不好",
+"为什么就是不好": "gun",
 }
 app.Shits(func(ai *cq.Ai) {
-    value := ai.Msg.GetValue(mp)    //从数据源里匹配
-    if len(value) == 0 {
-        return
-    }
-    ai.Group.SendMsg(value)
-    ai.Stop()
+value := ai.Msg.GetValue(mp)    //从数据源里匹配
+if len(value) == 0 {
+return
+}
+ai.Group.SendMsg(value)
+ai.Stop()
 })
 ```
 **注意** `ai.stop()`会直接跳出当前会话
@@ -108,25 +108,25 @@ app.Shits(func(ai *cq.Ai) {
 前置器是在参数解析之前执行的函数,常用做参数效验,快速操作,中间件
 ```golang
 app.Uses(func(ai *cq.Ai) {
-    if strings.Contains(ai.Msg.GetRawMessage(), "sb") {
-        err := ai.Msg.DelMsg()//测回消息
-        if err != nil {
-            panic(err)
-        }
-        ai.Group.SendMsg("检测到不好的词汇,已撤回")
-        ai.Stop() //结束当前会话
-    }
+if strings.Contains(ai.Msg.GetRawMessage(), "sb") {
+err := ai.Msg.DelMsg()//测回消息
+if err != nil {
+panic(err)
+}
+ai.Group.SendMsg("检测到不好的词汇,已撤回")
+ai.Stop() //结束当前会话
+}
 })
 ```
 ## 后置器
 后置器是在参数解析之后执行的函数,常用做数据统计,信息收集,日志处理
 ```golang
 app.Afters(func(ai *cq.Ai) {
-    mp := map[string]any{
-        "id":  ai.User.GetId(),
-        "age": ai.User.GetAge(),
-    }
-    fmt.Println(mp)
+mp := map[string]any{
+"id":  ai.User.GetId(),
+"age": ai.User.GetAge(),
+}
+fmt.Println(mp)
 })
 ```
 ## 定时器
