@@ -187,7 +187,7 @@ func (m *Msg) GetIndex(strs []string) int {
 
 //发送私聊消息
 func (u *User) SendMsg(msg string) int32 {
-	url := getUrl() + "/send_private_msg"
+	url := api_url + "/send_private_msg"
 
 	data, err := request.Post(url, newUserMsg(u.GetId(), msg, false).jsonToBytes())
 	if err != nil {
@@ -199,7 +199,7 @@ func (u *User) SendMsg(msg string) int32 {
 
 //发送临时会话消息
 func (u *User) SendMsgByGroup(msg string, groupId int64) int32 {
-	url := getUrl() + "/send_private_msg"
+	url := api_url + "/send_private_msg"
 
 	data, err := request.Post(url, newUserMsgByGroup(u.GetId(), msg, groupId, false).jsonToBytes())
 	if err != nil {
@@ -211,7 +211,7 @@ func (u *User) SendMsgByGroup(msg string, groupId int64) int32 {
 
 //上传私聊文件
 func (u *User) UpFile(file string, name string) error {
-	url := getUrl() + "/send_private_msg"
+	url := api_url + "/send_private_msg"
 
 	_, err := request.Post(url, newUpUserFile(u.GetId(), file, name).jsonToBytes())
 	return err
@@ -219,14 +219,14 @@ func (u *User) UpFile(file string, name string) error {
 
 //撤回消息
 func (m *Msg) DelMsg() error {
-	url := getUrl() + "/delete_msg"
+	url := api_url + "/delete_msg"
 	_, err := request.Post(url, newIdMsg(m.GetId()).jsonToBytes())
 	return err
 }
 
 //获取消息
 func (m *Msg) GetMsg() map[string]any {
-	url := getUrl() + "/get_msg"
+	url := api_url + "/get_msg"
 	data, err := request.Post(url, newIdMsg(m.GetId()).jsonToBytes())
 	if err != nil {
 		return nil
@@ -236,7 +236,7 @@ func (m *Msg) GetMsg() map[string]any {
 
 //获取消息图片
 func (m *Msg) GetMsgImage() map[string]any {
-	url := getUrl() + "/get_image"
+	url := api_url + "/get_image"
 	data, err := request.Post(url, newImgMsg((*m).cqCodes["img"][0]["url"].(string)).jsonToBytes())
 	if err != nil {
 		return nil
@@ -246,7 +246,7 @@ func (m *Msg) GetMsgImage() map[string]any {
 
 //发送群聊消息
 func (g *Group) SendMsg(msg string) int32 {
-	url := getUrl() + "/send_group_msg"
+	url := api_url + "/send_group_msg"
 	data, err := request.Post(url, newGloupMsg(g.GetId(), msg, false).jsonToBytes())
 	if err != nil {
 		return 0
@@ -257,7 +257,7 @@ func (g *Group) SendMsg(msg string) int32 {
 
 //群聊踢人
 func (g *Group) DelGroupUser(id int64, rejectAdd ...bool) error {
-	url := getUrl() + "/set_group_kick"
+	url := api_url + "/set_group_kick"
 	var reject bool
 	if len(rejectAdd) == 0 {
 		reject = false
@@ -270,63 +270,63 @@ func (g *Group) DelGroupUser(id int64, rejectAdd ...bool) error {
 
 //群聊禁言
 func (g *Group) TabooUser(id int64, duration int) error {
-	url := getUrl() + "/set_group_ban"
+	url := api_url + "/set_group_ban"
 	_, err := request.Post(url, newGroupBan(g.GetId(), id, duration*60).jsonToBytes())
 	return err
 }
 
 //群聊全员禁言
 func (g *Group) TabooGroup(enable bool) error {
-	url := getUrl() + "/set_group_whole_ban"
+	url := api_url + "/set_group_whole_ban"
 	_, err := request.Post(url, newGroupAllBan(g.GetId(), enable).jsonToBytes())
 	return err
 }
 
 //群聊设置管理员
 func (g *Group) SetGroupAdmin(userId int64, enable bool) error {
-	url := getUrl() + "/set_group_admin"
+	url := api_url + "/set_group_admin"
 	_, err := request.Post(url, newGroupSetAdmin(g.GetId(), userId, enable).jsonToBytes())
 	return err
 }
 
 //群聊设置名片
 func (g *Group) SetGroupCard(userId int64, card string) error {
-	url := getUrl() + "/set_group_card"
+	url := api_url + "/set_group_card"
 	_, err := request.Post(url, newGroupSetCard(g.GetId(), userId, card).jsonToBytes())
 	return err
 }
 
 //群聊设置群名
 func (g *Group) SetGroupName(name string) error {
-	url := getUrl() + "/set_group_name"
+	url := api_url + "/set_group_name"
 	_, err := request.Post(url, newGroupSetName(g.GetId(), name).jsonToBytes())
 	return err
 }
 
 //退出群聊
 func (g *Group) LeaveGroup() error {
-	url := getUrl() + "/set_group_leave"
+	url := api_url + "/set_group_leave"
 	_, err := request.Post(url, newGroupLeave(g.GetId(), false).jsonToBytes())
 	return err
 }
 
 //解散群聊
 func (g *Group) DissolutionGroup() error {
-	url := getUrl() + "/set_group_leave"
+	url := api_url + "/set_group_leave"
 	_, err := request.Post(url, newGroupLeave(g.GetId(), true).jsonToBytes())
 	return err
 }
 
 //群聊设置头衔
 func (g *Group) SetGroupTitle(userId int64, title string) error {
-	url := getUrl() + "/set_group_special_title"
+	url := api_url + "/set_group_special_title"
 	_, err := request.Post(url, newGroupTitle(g.GetId(), userId, title, -1).jsonToBytes())
 	return err
 }
 
 //获取群成员信息
 func (g *Group) GetGroupUserInfo(userId int64, noCache bool) request.Json {
-	url := getUrl() + "/get_group_member_info"
+	url := api_url + "/get_group_member_info"
 	data, err := request.Post(url, newGroupUserInfo(g.GetId(), userId, noCache).jsonToBytes())
 	if err != nil {
 		return nil
@@ -336,7 +336,7 @@ func (g *Group) GetGroupUserInfo(userId int64, noCache bool) request.Json {
 
 //获取群成员信息列表
 func (g *Group) GetGroupUserInfoList() request.List {
-	url := getUrl() + "/get_group_member_list"
+	url := api_url + "/get_group_member_list"
 	data, err := request.Post(url, newGroupIdp(g.GetId()).jsonToBytes())
 	if err != nil {
 		return nil
@@ -346,7 +346,7 @@ func (g *Group) GetGroupUserInfoList() request.List {
 
 //获取群荣誉信息
 func (g *Group) GetGrouphonorInfo(hType string) request.Json {
-	url := getUrl() + "/get_group_honor_info"
+	url := api_url + "/get_group_honor_info"
 	data, err := request.Post(url, newGroupHonorInfo(g.GetId(), hType).jsonToBytes())
 	if err != nil {
 		return nil
@@ -356,7 +356,7 @@ func (g *Group) GetGrouphonorInfo(hType string) request.Json {
 
 //设置群头像
 func (g *Group) SetGroupImg(file string, cache int) request.Json {
-	url := getUrl() + "/set_group_portrait"
+	url := api_url + "/set_group_portrait"
 	data, err := request.Post(url, newSetGroupImg(g.GetId(), file, cache).jsonToBytes())
 	if err != nil {
 		return nil
@@ -366,7 +366,7 @@ func (g *Group) SetGroupImg(file string, cache int) request.Json {
 
 //上传群聊文件
 func (g *Group) UpFile(file string, name string, folder ...string) error {
-	url := getUrl() + "/send_private_msg"
+	url := api_url + "/send_private_msg"
 	var filep = newUpGroupFile(g.GetId(), file, name)
 	if len(folder) != 0 {
 		(*filep).Folder = folder[0]
@@ -377,7 +377,7 @@ func (g *Group) UpFile(file string, name string, folder ...string) error {
 
 //获取群聊文件信息
 func (g *Group) GetFileInfo() request.Json {
-	url := getUrl() + "/get_group_file_system_info"
+	url := api_url + "/get_group_file_system_info"
 	data, err := request.Post(url, newGroupIdp(g.GetId()).jsonToBytes())
 	if err != nil {
 		return nil
@@ -387,7 +387,7 @@ func (g *Group) GetFileInfo() request.Json {
 
 //获取群聊根目录文件列表
 func (g *Group) GetFileListRoot() request.Json {
-	url := getUrl() + "/get_group_root_files"
+	url := api_url + "/get_group_root_files"
 	data, err := request.Post(url, newGroupIdp(g.GetId()).jsonToBytes())
 	if err != nil {
 		return nil
@@ -397,7 +397,7 @@ func (g *Group) GetFileListRoot() request.Json {
 
 //获取群聊子目录文件列表
 func (g *Group) GetFileList(folder string) request.Json {
-	url := getUrl() + "/get_group_files_by_folder"
+	url := api_url + "/get_group_files_by_folder"
 	data, err := request.Post(url, newGetGroupFileList(g.GetId(), folder).jsonToBytes())
 	if err != nil {
 		return nil
@@ -407,28 +407,28 @@ func (g *Group) GetFileList(folder string) request.Json {
 
 //创建群聊文件目录
 func (g *Group) CreateFolder(name string) error {
-	url := getUrl() + "/create_group_file_folder"
+	url := api_url + "/create_group_file_folder"
 	_, err := request.Post(url, newCreateFolder(g.GetId(), name).jsonToBytes())
 	return err
 }
 
 //删除群聊文件目录
 func (g *Group) DelFolder(folderId string) error {
-	url := getUrl() + "/delete_group_folder"
+	url := api_url + "/delete_group_folder"
 	_, err := request.Post(url, newGetGroupFileList(g.GetId(), folderId).jsonToBytes())
 	return err
 }
 
 //删除群文件
 func (g *Group) DelFile(fileId string, busid int32) error {
-	url := getUrl() + "/delete_group_file"
+	url := api_url + "/delete_group_file"
 	_, err := request.Post(url, newGroupFile(g.GetId(), fileId, busid).jsonToBytes())
 	return err
 }
 
 //获取群文件
 func (g *Group) GetFile(fileId string, busid int32) request.Json {
-	url := getUrl() + "/get_group_file_url"
+	url := api_url + "/get_group_file_url"
 	data, err := request.Post(url, newGroupFile(g.GetId(), fileId, busid).jsonToBytes())
 	if err != nil {
 		return nil
@@ -438,7 +438,7 @@ func (g *Group) GetFile(fileId string, busid int32) request.Json {
 
 //获取群文件
 func (g *Group) GetAtCount() request.Json {
-	url := getUrl() + "/get_group_at_all_remain"
+	url := api_url + "/get_group_at_all_remain"
 	data, err := request.Post(url, newGroupIdp(g.GetId()).jsonToBytes())
 	if err != nil {
 		return nil
@@ -448,7 +448,7 @@ func (g *Group) GetAtCount() request.Json {
 
 //发送群公告
 func (g *Group) SendNotice(content string, img ...string) error {
-	url := getUrl() + "/_send_group_notice"
+	url := api_url + "/_send_group_notice"
 	sgnp := newSendGroupNotice(g.GetId(), content)
 	if len(img) != 0 {
 		(*sgnp).Image = img[0]
@@ -459,7 +459,7 @@ func (g *Group) SendNotice(content string, img ...string) error {
 
 //获取群公告
 func (g *Group) GetNotice() request.List {
-	url := getUrl() + "/_get_group_notice"
+	url := api_url + "/_get_group_notice"
 	data, err := request.Post(url, newGroupIdp(g.GetId()).jsonToBytes())
 	if err != nil {
 		return nil
@@ -469,7 +469,7 @@ func (g *Group) GetNotice() request.List {
 
 //获取群消息历史记录
 func (g *Group) GetMsgHistory(messageSeq int64) request.Json {
-	url := getUrl() + "/get_group_msg_history"
+	url := api_url + "/get_group_msg_history"
 	data, err := request.Post(url, newGetGroupMsgHistory(g.GetId(), messageSeq).jsonToBytes())
 	if err != nil {
 		return nil
@@ -479,7 +479,7 @@ func (g *Group) GetMsgHistory(messageSeq int64) request.Json {
 
 //获取群精华消息列表
 func (g *Group) GetEssenceList() request.List {
-	url := getUrl() + "/get_essence_msg_list"
+	url := api_url + "/get_essence_msg_list"
 	data, err := request.Post(url, newGroupIdp(g.GetId()).jsonToBytes())
 	if err != nil {
 		return nil
@@ -489,7 +489,7 @@ func (g *Group) GetEssenceList() request.List {
 
 //检查链接安全性
 func (ai *Ai) GetUrlSafely(urls string) int {
-	url := getUrl() + "/check_url_safely"
+	url := api_url + "/check_url_safely"
 	data, err := request.Post(url, newUrlStr(urls).jsonToBytes())
 	if err != nil {
 		return 0
@@ -499,28 +499,28 @@ func (ai *Ai) GetUrlSafely(urls string) int {
 
 //设置精华消息
 func (ai *Ai) SetEssence(id int32) error {
-	url := getUrl() + "/set_essence_msg"
+	url := api_url + "/set_essence_msg"
 	_, err := request.Post(url, newMsgIdp(id).jsonToBytes())
 	return err
 }
 
 //移出精华消息
 func (ai *Ai) DelEssence(id int32) error {
-	url := getUrl() + "/delete_essence_msg"
+	url := api_url + "/delete_essence_msg"
 	_, err := request.Post(url, newMsgIdp(id).jsonToBytes())
 	return err
 }
 
 //设置登陆号资料
 func (ai *Ai) SetAiInfo(nickname, company, email, college, personalNote string) error {
-	url := getUrl() + "/set_qq_profile"
+	url := api_url + "/set_qq_profile"
 	_, err := request.Post(url, newSetAiInfo(nickname, company, email, college, personalNote).jsonToBytes())
 	return err
 }
 
 //查询陌生人信息
 func (ai *Ai) GetUserInfo(id int64, noCache bool) request.Json {
-	url := getUrl() + "/get_stranger_info"
+	url := api_url + "/get_stranger_info"
 	data, err := request.Post(url, newStrangerInfo(id, noCache).jsonToBytes())
 	if err != nil {
 		return nil
@@ -530,7 +530,7 @@ func (ai *Ai) GetUserInfo(id int64, noCache bool) request.Json {
 
 //获取群信息
 func (ai *Ai) GetGroupInfo(id int64, noCache bool) request.Json {
-	url := getUrl() + "/get_group_info"
+	url := api_url + "/get_group_info"
 	data, err := request.Post(url, newGroupInfo(id, noCache).jsonToBytes())
 	if err != nil {
 		return nil
@@ -540,7 +540,7 @@ func (ai *Ai) GetGroupInfo(id int64, noCache bool) request.Json {
 
 //获取好友列表
 func (ai *Ai) GetFriendList() request.List {
-	url := getUrl() + "/get_friend_list"
+	url := api_url + "/get_friend_list"
 	data, err := request.Post(url, []byte(""))
 	if err != nil {
 		return nil
@@ -550,7 +550,7 @@ func (ai *Ai) GetFriendList() request.List {
 
 //获取群列表
 func (ai *Ai) GetGroupList() request.List {
-	url := getUrl() + "/get_group_list"
+	url := api_url + "/get_group_list"
 	data, err := request.Post(url, []byte(""))
 	if err != nil {
 		return nil
@@ -560,7 +560,7 @@ func (ai *Ai) GetGroupList() request.List {
 
 //获取群系统消息
 func (ai *Ai) GetGroupSystemMsg() request.Json {
-	url := getUrl() + "/get_group_system_msg"
+	url := api_url + "/get_group_system_msg"
 	data, err := request.Post(url, []byte(""))
 	if err != nil {
 		return nil
@@ -570,7 +570,7 @@ func (ai *Ai) GetGroupSystemMsg() request.Json {
 
 //获取单项好友列表
 func (ai *Ai) GetUnidirectionalFriendList() request.List {
-	url := getUrl() + "/get_unidirectional_friend_list"
+	url := api_url + "/get_unidirectional_friend_list"
 	data, err := request.Post(url, []byte(""))
 	if err != nil {
 		return nil
@@ -580,21 +580,21 @@ func (ai *Ai) GetUnidirectionalFriendList() request.List {
 
 //删除好友
 func (ai *Ai) DelUser(id int64) error {
-	url := getUrl() + "/delete_friend"
+	url := api_url + "/delete_friend"
 	_, err := request.Post(url, newUserIdp(id).jsonToBytes())
 	return err
 }
 
 //群聊打卡
 func (ai *Ai) GroupSign(id int64) error {
-	url := getUrl() + "/send_group_sign"
+	url := api_url + "/send_group_sign"
 	_, err := request.Post(url, newGroupIdp(id).jsonToBytes())
 	return err
 }
 
 //获取状态
 func (ai *Ai) GetStatus() request.Json {
-	url := getUrl() + "/get_status"
+	url := api_url + "/get_status"
 	data, err := request.Post(url, []byte(""))
 	if err != nil {
 		return nil
