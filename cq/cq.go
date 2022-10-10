@@ -91,7 +91,9 @@ func headgro(params map[string]any) {
 	msg := newMsg(int32(params["message_id"].(float64)), params["message_type"].(string), params["sub_type"].(string),
 		params["message"].(string), params["raw_message"].(string), int32(params["font"].(float64)), int64(params["time"].(float64)))
 	group := newGroup(int64(params["group_id"].(float64)))
-	runGroup(user, group, msg)
+	ai := newAi(user, group, msg)
+	ai.data = params
+	runGroup(ai)
 
 }
 
@@ -104,11 +106,13 @@ func headpri(params map[string]any) {
 	if params["temp_source"] != nil {
 		msg.tempSource = int(params["temp_source"].(float64))
 	}
-	runPrivate(user, nil, msg)
+	ai := newAi(user, nil, msg)
+	ai.data = params
+	runPrivate(ai)
 }
 
-func runGroup(u *User, g *Group, m *Msg) {
-	ai := newAi(u, g, m)
+func runGroup(ai *Ai) {
+
 	for _, k := range roximitors {
 		if ai.state == 4 {
 			return
@@ -120,9 +124,9 @@ func runGroup(u *User, g *Group, m *Msg) {
 	}
 
 	for k, v := range handleByPower {
-		if hasListAdmin(v, u.id) {
+		if hasListAdmin(v, ai.User.id) {
 			for k2 := range *k {
-				if k2.Match(m.rawMessage) {
+				if k2.Match(ai.Msg.rawMessage) {
 					k2.run(ai)
 					afters(ai)
 					return
@@ -131,14 +135,14 @@ func runGroup(u *User, g *Group, m *Msg) {
 		}
 	}
 	for k, v := range handlerBySection {
-		if hasListAdmin(v.getIds(), u.id) && k.Match(m.rawMessage) {
+		if hasListAdmin(v.getIds(), ai.User.id) && k.Match(ai.Msg.rawMessage) {
 			k.run(ai)
 			afters(ai)
 			return
 		}
 	}
 	for _, v := range handlerGroups {
-		if v.Match(m.rawMessage) {
+		if v.Match(ai.Msg.rawMessage) {
 			v.run(ai)
 			afters(ai)
 			return
@@ -146,7 +150,7 @@ func runGroup(u *User, g *Group, m *Msg) {
 	}
 
 	for _, v := range handlers {
-		if v.Match(m.rawMessage) {
+		if v.Match(ai.Msg.rawMessage) {
 			v.run(ai)
 			afters(ai)
 			return
@@ -160,8 +164,7 @@ func runGroup(u *User, g *Group, m *Msg) {
 	}
 }
 
-func runPrivate(u *User, g *Group, m *Msg) {
-	ai := newAi(u, g, m)
+func runPrivate(ai *Ai) {
 	for _, k := range roximitor {
 		if ai.state == 4 {
 			return
@@ -172,9 +175,9 @@ func runPrivate(u *User, g *Group, m *Msg) {
 		return
 	}
 	for k, v := range handleByPower {
-		if hasListAdmin(v, u.id) {
+		if hasListAdmin(v, ai.User.id) {
 			for k2 := range *k {
-				if k2.Match(m.rawMessage) {
+				if k2.Match(ai.Msg.rawMessage) {
 					k2.run(ai)
 					after(ai)
 					return
@@ -183,28 +186,28 @@ func runPrivate(u *User, g *Group, m *Msg) {
 		}
 	}
 	for k, v := range handlerBySection {
-		if hasListAdmin(v.getIds(), u.id) && k.Match(m.rawMessage) {
+		if hasListAdmin(v.getIds(), ai.User.id) && k.Match(ai.Msg.rawMessage) {
 			k.run(ai)
 			after(ai)
 			return
 		}
 	}
 	for _, v := range handlerPrivates {
-		if v.Match(m.rawMessage) {
+		if v.Match(ai.Msg.rawMessage) {
 			v.run(ai)
 			after(ai)
 			return
 		}
 	}
 	for _, v := range handlerTemporarys {
-		if v.Match(m.rawMessage) {
+		if v.Match(ai.Msg.rawMessage) {
 			v.run(ai)
 			after(ai)
 			return
 		}
 	}
 	for _, v := range handlers {
-		if v.Match(m.rawMessage) {
+		if v.Match(ai.Msg.rawMessage) {
 			v.run(ai)
 			after(ai)
 			return

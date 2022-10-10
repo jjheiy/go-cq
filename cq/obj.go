@@ -9,6 +9,7 @@ import (
 
 type Ai struct {
 	CqH
+	data  map[string]any
 	Code  *cqCode
 	User  *User
 	Group *Group
@@ -24,6 +25,9 @@ func newAi(u *User, g *Group, m *Msg) *Ai {
 		Msg:   m,
 		state: 0,
 	}
+}
+func (ai *Ai) Data() map[string]any {
+	return ai.data
 }
 
 func (ai *Ai) IsGroup() bool {

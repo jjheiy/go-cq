@@ -15,7 +15,7 @@ func (ch *CqH) Run(ip string) error {
 	fmt.Println("cq initialization...")
 	handleMsgInit()
 	http.HandleFunc("/", accept)
-	fmt.Println("cq service started...")
+	fmt.Println("============================cq service started...=============================")
 	return http.ListenAndServe(ip, nil)
 }
 
