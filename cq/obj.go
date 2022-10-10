@@ -700,6 +700,7 @@ type powerHandle map[*handleMsg]uint8
 type handlePower map[*powerHandle][]int64
 
 var handleByPower handlePower
+var handlerOthers map[string]func(*Ai)
 
 func (hp *handlePower) containUpdate(id int64, power uint8) bool {
 	for k1 := range *hp {

@@ -26,6 +26,10 @@ func (ch *CqH) Shits(handler ...handle) {
 	shits = append(shits, handler...)
 }
 
+func (ch *CqH) HandleOther(tag string, handle func(*Ai)) {
+	handlerOthers[tag] = handle
+}
+
 //处理所有消息
 func (ch *CqH) HandleMsgFunc(pattern string, handler func(*Ai)) {
 	handlers = append(handlers, newHandleMsg(pattern, handler))

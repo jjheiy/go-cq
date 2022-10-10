@@ -39,5 +39,7 @@ func ini() {
 	shit = make([]handle, 0)
 	shits = make([]handle, 0)
 
+	handlerOthers = make(map[string]func(*Ai))
+
 	timedEventList = make([]*timedEvent, 0)
 }
